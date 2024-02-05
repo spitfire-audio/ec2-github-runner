@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const core = require('@actions/core');
 const config = require('./config');
 
-// User data scripts are run as the root user
+// User data scripts are run as the root user for linux
 function buildUserDataScript(githubRegistrationToken, label) {
   if (config.input.runnerHomeDir) {
     // If runner home directory is specified, we expect the actions-runner software (and dependencies)
@@ -32,10 +32,44 @@ function buildUserDataScript(githubRegistrationToken, label) {
   }
 }
 
+// User data script for windows os
+function buildUserDataScriptForWindows(githubRegistrationToken, label) {
+  if (config.input.runnerHomeDir) {
+    // If runner home directory is specified, we expect the actions-runner software (and dependencies)
+    // to be pre-installed in the AMI, so we simply cd into that directory and then start the runner
+    return [
+      '<powershell>',
+      `cd "${config.input.runnerHomeDir}"`,
+      `echo "${config.input.preRunnerScript}" > pre-runner-script.bat`,
+      '& pre-runner-script.bat',
+      `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended`,
+      './run.cmd',
+      '</powershell>',
+      '<persist>false</persist>',
+    ];
+  } else {
+    return [
+      '<powershell>',
+      `mkdir actions-runner; cd actions-runner`,
+      `echo "${config.input.preRunnerScript}" > pre-runner-script.bat`,
+      '& pre-runner-script.bat',
+      `Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v${runnerVersion}/actions-runner-win-x64-${runnerVersion}.zip -OutFile actions-runner-win-x64-${runnerVersion}.zip`,
+      `Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-${runnerVersion}.zip", "$PWD")`,
+      `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended`,
+      './run.cmd',
+      '</powershell>',
+      '<persist>false</persist>',
+    ];
+  }
+}
+
 async function startEc2Instance(label, githubRegistrationToken) {
   const ec2 = new AWS.EC2();
 
-  const userData = buildUserDataScript(githubRegistrationToken, label);
+  const userData =
+    config.input.ec2Os == 'windows'
+      ? buildUserDataScriptForWindows(githubRegistrationToken, label)
+      : buildUserDataScript(githubRegistrationToken, label);
 
   const params = {
     ImageId: config.input.ec2ImageId,
