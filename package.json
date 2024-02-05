@@ -14,7 +14,7 @@
   "scripts": {
     "index": "node -r dotenv/config ./src/index.js",
     "lint": "eslint ./src/*.js",
-    "package": "ncc build ./src/index.js"
+    "package": "export NODE_OPTIONS=--openssl-legacy-provider && ncc build ./src/index.js"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
