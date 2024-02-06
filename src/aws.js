@@ -3,7 +3,7 @@ const core = require('@actions/core');
 const config = require('./config');
 const runnerVersion = '2.309.0';
 // User data scripts are run as the root user for linux
-function buildUserDataScript(githubRegistrationToken, label) {
+function buildUserDataScriptForLinux(githubRegistrationToken, label) {
   if (config.input.runnerHomeDir) {
     // If runner home directory is specified, we expect the actions-runner software (and dependencies)
     // to be pre-installed in the AMI, so we simply cd into that directory and then start the runner
@@ -61,11 +61,14 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
 
 async function startEc2Instance(label, githubRegistrationToken) {
   const ec2 = new AWS.EC2();
+  const userData = '';
 
-  const userData =
-    config.input.ec2Os == 'windows'
-      ? buildUserDataScriptForWindows(githubRegistrationToken, label)
-      : buildUserDataScript(githubRegistrationToken, label);
+  if (config.input.ec2Os) {
+    userData =
+      config.input.ec2Os == 'windows'
+        ? buildUserDataScriptForWindows(githubRegistrationToken, label)
+        : buildUserDataScriptForLinux(githubRegistrationToken, label);
+  }
 
   const params = {
     ImageId: config.input.ec2ImageId,
