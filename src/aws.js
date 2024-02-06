@@ -61,7 +61,7 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
 
 async function startEc2Instance(label, githubRegistrationToken) {
   const ec2 = new AWS.EC2();
-  const userData = '';
+  var userData = '';
 
   if (config.input.ec2Os) {
     userData =
