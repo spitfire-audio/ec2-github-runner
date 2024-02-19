@@ -42,7 +42,7 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
       `cd "${config.input.runnerHomeDir}"`,
       `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended`,
       './run.cmd',
-      `New-Item C:\actions-runner\abc.txt`,
+      `New-Item C:\\actions-runner\\abc.txt`,
       '</powershell>',
       '<persist>true</persist>',
     ];
