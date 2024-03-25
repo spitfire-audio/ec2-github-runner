@@ -42,7 +42,8 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
       `cd "${config.input.runnerHomeDir}"`,
       `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended`,
       './run.cmd',
-      `New-Item C:\\actions-runner\\abc.txt`,
+      `New-Item C:\\actions-runner\\whoami.txt`,
+      'whoami > C:\\actions-runner\\whoami.txt',
       '</powershell>',
       '<persist>true</persist>',
     ];
@@ -54,6 +55,8 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
       `Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-${runnerVersion}.zip", "$PWD")`,
       `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended`,
       './run.cmd',
+      `New-Item C:\\actions-runner\\whoami.txt`,
+      'whoami > C:\\actions-runner\\whoami.txt',
       '</powershell>',
       '<persist>false</persist>',
     ];
