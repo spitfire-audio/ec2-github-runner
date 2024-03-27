@@ -32,7 +32,7 @@ function buildUserDataScriptForLinux(githubRegistrationToken, label) {
   }
 }
 
-// User data script for windows os
+// User data script for windows
 function buildUserDataScriptForWindows(githubRegistrationToken, label) {
   if (config.input.runnerHomeDir) {
     // If runner home directory is specified, we expect the actions-runner software (and dependencies)
