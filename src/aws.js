@@ -40,11 +40,11 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
     return [
       '<powershell>',
       `New-Item C:\\actions-runner\\label.txt`,
-      `${label} > C:\\actions-runner\\label.txt`,
+      `"${label}" > C:\\actions-runner\\label.txt`,
       'icacls C:\\actions-runner\\label.txt /grant Everyone:F',
       `New-Item C:\\actions-runner\\githubRegistrationToken.txt`,
       'icacls C:\\actions-runner\\githubRegistrationToken.txt /grant Everyone:F',
-      `${githubRegistrationToken} > C:\\actions-runner\\gitHubRegistrationToken.txt`,
+      `"${githubRegistrationToken}" > C:\\actions-runner\\gitHubRegistrationToken.txt`,
       `New-Item C:\\actions-runner\\repo.txt`,
       'icacls C:\\actions-runner\\repo.txt /grant Everyone:F',
       `"https://github.com/${config.githubContext.owner}/${config.githubContext.repo}" > C:\\actions-runner\\repo.txt`,
@@ -59,8 +59,6 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
       `Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-${runnerVersion}.zip", "$PWD")`,
       `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended`,
       './run.cmd',
-      `New-Item C:\\actions-runner\\whoami.txt`,
-      'whoami > C:\\actions-runner\\whoami.txt',
       '</powershell>',
       '<persist>false</persist>',
     ];
