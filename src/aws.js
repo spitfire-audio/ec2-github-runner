@@ -39,11 +39,15 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
     // to be pre-installed in the AMI, so we simply cd into that directory and then start the runner
     return [
       '<powershell>',
-      `cd "${config.input.runnerHomeDir}"`,
-      `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended`,
-      './run.cmd',
-      `New-Item C:\\actions-runner\\whoami.txt`,
-      'whoami > C:\\actions-runner\\whoami.txt',
+      `New-Item C:\\actions-runner\\label.txt`,
+      `${label} > C:\\actions-runner\\label.txt`,
+      'icacls C:\\actions-runner\\label.txt /grant Everyone:F',
+      `New-Item C:\\actions-runner\\githubRegistrationToken.txt`,
+      'icacls C:\\actions-runner\\githubRegistrationToken.txt /grant Everyone:F',
+      `${githubRegistrationToken} > C:\\actions-runner\\gitHubRegistrationToken.txt`,
+      `New-Item C:\\actions-runner\\repo.txt`,
+      'icacls C:\\actions-runner\\repo.txt /grant Everyone:F',
+      `"https://github.com/${config.githubContext.owner}/${config.githubContext.repo}" > C:\\actions-runner\\repo.txt`,
       '</powershell>',
       '<persist>true</persist>',
     ];
