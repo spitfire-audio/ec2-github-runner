@@ -40,6 +40,7 @@ function buildUserDataScriptForWindows(githubRegistrationToken, label) {
     return [
       '<powershell>',
       `New-Item C:\\actions-runner\\label.txt`,
+      `"${label}" > C:\\actions-runner\\update.finished`,
       `"${label}" > C:\\actions-runner\\label.txt`,
       'icacls C:\\actions-runner\\label.txt /grant Everyone:F',
       `New-Item C:\\actions-runner\\githubRegistrationToken.txt`,
